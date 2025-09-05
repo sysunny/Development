@@ -2,6 +2,8 @@ package com.example.payment.factory;
 
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.example.payment.gateway.PaymentGateway;
@@ -10,9 +12,11 @@ import com.example.payment.model.GatewayType;
 @Component
 public class GatewayFactory {
 
-    private final Map<String, PaymentGateway> gateways;
+    private static final Logger log = LoggerFactory.getLogger(GatewayFactory.class);
 
-    public GatewayFactory(Map<String, PaymentGateway> gateways) {
+    private final Map<GatewayType, PaymentGateway> gateways;
+
+    public GatewayFactory(Map<GatewayType, PaymentGateway> gateways) {
         this.gateways = gateways;
     }
 
@@ -20,10 +24,9 @@ public class GatewayFactory {
         if (type == null) {
             type = GatewayType.PAYTM; // default
         }
-        // Bean names are registered in lowerCamelCase by Spring (e.g. paytmGateway)
-        String beanName = type.name().toLowerCase() + "Gateway";
-        PaymentGateway gateway = gateways.get(beanName);
+        PaymentGateway gateway = gateways.get(type);
         if (gateway == null) {
+            log.error("No gateway found for type {}. Available types: {}", type, gateways.keySet());
             throw new IllegalArgumentException("No gateway found for type: " + type);
         }
         return gateway;
