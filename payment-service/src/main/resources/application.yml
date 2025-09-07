@@ -38,3 +38,14 @@ resilience4j:
     instances:
       paymentService:
         baseConfig: default
+
+# Gateway external endpoints (used by PaytmGateway and RazorpayGateway)
+# These can be overridden per-environment. If left as defaults, the gateways
+# will fallback to the local banking system simulation when remote calls fail.
+gateways:
+  paytm:
+    url: http://localhost:8081/paytm/process
+    apiKey: "" # set the Paytm API key if required
+  razorpay:
+    url: http://localhost:8082/razorpay/process
+    apiKey: "" # set the Razorpay API key (Bearer token) if required
